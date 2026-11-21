@@ -1,0 +1,4 @@
+runtime! defaults.vim
+
+set number
+set relativenumber
