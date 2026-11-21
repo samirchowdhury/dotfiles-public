@@ -3,6 +3,8 @@ local act = wezterm.action
 
 local config = wezterm.config_builder()
 
+config.color_scheme = "rose-pine-moon"
+
 -- Left Option sends Alt/Meta (needed for tmux Option bindings); right Option still types special characters.
 config.send_composed_key_when_left_alt_is_pressed = false
 

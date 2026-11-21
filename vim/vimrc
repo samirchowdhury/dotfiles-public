@@ -2,3 +2,7 @@ runtime! defaults.vim
 
 set number
 set relativenumber
+set termguicolors
+set background=dark
+packadd! rose-pine
+colorscheme rosepine_moon

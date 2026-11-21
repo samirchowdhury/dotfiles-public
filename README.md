@@ -2,6 +2,8 @@
 
 Run `./install.sh` to symlink the WezTerm and tmux configs into `~/.config` and the Vim config to `~/.vimrc`. Existing regular config files are backed up with a `.bak` suffix; installation stops rather than overwrite an existing backup.
 
+WezTerm and Vim use Rosé Pine Moon. The installer clones the [Vim theme](https://github.com/rose-pine/vim) on first install, which requires Git and internet access.
+
 Vim shows the current line's absolute number and relative numbers for other lines. In normal mode, use a displayed distance followed by `j` or `k` to move down or up (for example, `5j`), or use `42G` to jump to absolute line 42.
 
 ## Key bindings

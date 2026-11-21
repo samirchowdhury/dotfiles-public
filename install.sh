@@ -18,6 +18,16 @@ link() {
 	echo "linked $dst -> $src"
 }
 
+theme="$HOME/.vim/pack/themes/start/rose-pine"
+if [ ! -f "$theme/colors/rosepine_moon.vim" ]; then
+	if [ -e "$theme" ] || [ -L "$theme" ]; then
+		echo "cannot install Vim theme: $theme already exists but lacks rosepine_moon" >&2
+		exit 1
+	fi
+	mkdir -p "$(dirname "$theme")"
+	git clone --depth=1 https://github.com/rose-pine/vim.git "$theme"
+fi
+
 link wezterm/wezterm.lua .config/wezterm/wezterm.lua
 link tmux/tmux.conf .config/tmux/tmux.conf
 link vim/vimrc .vimrc
