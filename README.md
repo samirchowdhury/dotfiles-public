@@ -23,7 +23,9 @@ Similarly use a number followed by `w`,`b` or `h`, `l` to jump by words or chara
 | Insert a file path with fzf | `Ctrl+T` | `Ctrl+T` |
 | Change directory with fzf | Left `Option+C` | Left `Option+C` |
 | Accept zsh autosuggestion | `Right Arrow` | `Right Arrow` |
-| Next/previous word | `Option+f`, `Option+b` | `Option+f`, `Option+b` | 
+| Accept next suggested word / move forward a word | `Ctrl+F` | `Ctrl+F` |
+| Delete word before cursor | `Ctrl+W` | `Ctrl+W` |
+| Navigate to next/previous word | `Option+f`, `Option+b` | `Option+f`, `Option+b` | 
 
 tmux's `Ctrl+B` is the default prefix: release it before pressing the next key. The split bindings are inspired by Terminator (`Ctrl+Shift+E` / `Ctrl+Shift+O`). Only the left Option key acts as Alt in WezTerm; the right Option key still types special characters.
 
@@ -47,14 +49,14 @@ For fuzzy search, type to filter the lines, use the arrows to select one, and pr
 
 ## Shell tools
 
-fzf and the zsh plugins work at a zsh prompt in either WezTerm or tmux. With fzf, type to filter, use the arrows to select, and press Enter. Autosuggestions show a matching command from history as ghost text; press `Ctrl+F` to accept it. Syntax highlighting colors the command as you type; it has no shortcut.
+fzf and the zsh plugins work at a zsh prompt in either WezTerm or tmux. With fzf, type to filter, use the arrows to select, and press Enter. Autosuggestions show a matching command from history as ghost text; press `Right Arrow` at the end of the line to accept it all, or `Ctrl+F` to accept the next word. `Ctrl+W` deletes the word before the cursor. Syntax highlighting colors the command as you type; it has no shortcut.
 
 These shell tools are configured separately in `~/.zshrc`, not by `install.sh`. To set them up with Homebrew, run `brew install fzf zsh-autosuggestions zsh-syntax-highlighting`, then add the following near the end of `~/.zshrc` (syntax highlighting should be sourced last):
 
 ```zsh
 source <(fzf --zsh)
 source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-bindkey '^F' autosuggest-accept
+bindkey '^F' forward-word
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 ```
 
