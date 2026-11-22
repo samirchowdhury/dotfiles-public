@@ -71,3 +71,9 @@ source "$HOME/.config/dotfiles/git-aliases.zsh"
 ```
 
 The other Git shortcuts provided by the Oh My Zsh Git plugin require that plugin separately.
+
+## Global agent instructions
+
+The installer copies the minimal `AGENTS.md` template to `~/AGENTS.md` and symlinks `~/.claude/CLAUDE.md` to that file, Claude Code's global user-instruction location. Existing files or conflicting symlinks at either destination trigger a warning and are left unchanged.
+
+Edit `~/AGENTS.md` for your local instructions, or populate the repo template for future machines. This is a copy, not a symlink to the repo: later template edits do not update installed files. Do not put private instructions or secrets in this public repo.

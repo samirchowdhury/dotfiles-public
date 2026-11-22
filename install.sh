@@ -39,3 +39,20 @@ link wezterm/wezterm.lua .config/wezterm/wezterm.lua
 link tmux/tmux.conf .config/tmux/tmux.conf
 link vim/vimrc .vimrc
 link git/aliases.zsh .config/dotfiles/git-aliases.zsh
+
+if [ -e "$HOME/AGENTS.md" ] || [ -L "$HOME/AGENTS.md" ]; then
+	echo "warning: $HOME/AGENTS.md already exists; leaving it unchanged" >&2
+else
+	cp -n "$DIR/AGENTS.md" "$HOME/AGENTS.md"
+	echo "copied agent instructions to $HOME/AGENTS.md"
+fi
+
+mkdir -p "$HOME/.claude"
+if [ -L "$HOME/.claude/CLAUDE.md" ] && [ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$HOME/AGENTS.md" ]; then
+	echo "Claude instructions already linked to $HOME/AGENTS.md"
+elif [ -e "$HOME/.claude/CLAUDE.md" ] || [ -L "$HOME/.claude/CLAUDE.md" ]; then
+	echo "warning: $HOME/.claude/CLAUDE.md already exists; leaving it unchanged" >&2
+else
+	ln -s "$HOME/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+	echo "linked Claude instructions to $HOME/AGENTS.md"
+fi
