@@ -6,3 +6,5 @@ set termguicolors
 set background=dark
 packadd! rose-pine
 colorscheme rosepine_moon
+
+nnoremap <silent> <C-f> :BLines<CR>
