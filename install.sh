@@ -34,11 +34,30 @@ install_vim_package() {
 install_vim_package "$HOME/.vim/pack/themes/start/rose-pine" colors/rosepine_moon.vim https://github.com/rose-pine/vim.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/fzf" plugin/fzf.vim https://github.com/junegunn/fzf.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/fzf-vim" plugin/fzf.vim https://github.com/junegunn/fzf.vim.git
+install_vim_package "$HOME/.vim/pack/dotfiles/start/ale" plugin/ale.vim https://github.com/dense-analysis/ale.git
+
+if ! command -v rg >/dev/null 2>&1; then
+	if ! command -v brew >/dev/null 2>&1; then
+		echo "Ripgrep requires Homebrew; install it and rerun ./install.sh" >&2
+		exit 1
+	fi
+	brew install ripgrep
+fi
+
+if ! command -v markdownlint-cli2 >/dev/null 2>&1; then
+	if ! command -v npm >/dev/null 2>&1; then
+		echo "Markdown linting requires Node.js 22 or newer and npm; install them and rerun ./install.sh" >&2
+		exit 1
+	fi
+	npm install --global markdownlint-cli2
+fi
 
 link wezterm/wezterm.lua .config/wezterm/wezterm.lua
 link tmux/tmux.conf .config/tmux/tmux.conf
 link vim/vimrc .vimrc
 link git/aliases.zsh .config/dotfiles/git-aliases.zsh
+link snippets.json .config/agent-snippets/snippets.json
+echo "Agent snippet picker setup specification: $DIR/SNIPPET-PICKER.md"
 
 if [ -e "$HOME/AGENTS.md" ] || [ -L "$HOME/AGENTS.md" ]; then
 	echo "warning: $HOME/AGENTS.md already exists; leaving it unchanged" >&2
