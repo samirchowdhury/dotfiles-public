@@ -110,24 +110,27 @@ The installer copies the minimal `AGENTS.md` template to `~/AGENTS.md` and symli
 
 Edit `~/AGENTS.md` for your local instructions, or populate the repo template for future machines. This is a copy, not a symlink to the repo: later template edits do not update installed files. Do not put private instructions or secrets in this public repo.
 
+## Agent integrations
+
+The [agent integrations folder](agent-integrations/README.md) contains harness-neutral specifications and a shared setup workflow.
+For a new computer, ask: "Set up all integrations in `agent-integrations/` for Copilot CLI."
+Replace Copilot CLI with your target harness.
+The agent should assess every spec against the installed harness, prefer native configuration, and ask before implementing approximations.
+
 ## Agent snippets
 
 Edit `snippets.json` to add reusable prompts.
 The installer symlinks it to `~/.config/agent-snippets/snippets.json`.
 It does not install a picker or assume that your harness reads this file automatically.
 
-For agent-assisted setup, ask: "Set up this repo for my agent harness, including the snippet picker described in SNIPPET-PICKER.md."
-The [specification](SNIPPET-PICKER.md) directs the agent to check your installed harness for native support or build a minimal external adapter.
+The [specification](agent-integrations/SNIPPET-PICKER.md) directs the agent to check your installed harness for native support or build a minimal external adapter.
 The intended workflow is a hotkey, fuzzy search, and Enter to insert without submitting.
 Snippets refresh on each picker opening, with no usage tracking.
 
 ## Quiet tool traces
 
-The [quiet tool traces specification](QUIET-TOOL-TRACES.md) describes a presentation-only integration that hides routine tool calls and output, keeps errors visible, and lets you reveal traces on demand.
+The [quiet tool traces specification](agent-integrations/QUIET-TOOL-TRACES.md) describes a presentation-only integration that hides routine tool calls and output, keeps errors visible, and lets you reveal traces on demand.
 Tool execution, model context, and session history remain unchanged.
 This repo does not install a harness-specific implementation.
 
-For agent-assisted setup, ask: "Set up quiet tool traces for Copilot CLI using QUIET-TOOL-TRACES.md."
-Replace Copilot CLI with your target harness.
-The agent must check the installed version's native settings and supported display APIs, then configure them or build a minimal external adapter.
-If the harness cannot meet the spec, the agent should explain the gap and ask before implementing an approximation.
+Use the shared agent-assisted setup workflow above to configure it for your harness.

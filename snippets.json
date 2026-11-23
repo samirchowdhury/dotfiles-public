@@ -1,0 +1,12 @@
+[
+  {
+    "id": "review-only",
+    "name": "Review only",
+    "text": "Review this code, but don't post anything. Just tell me your findings."
+  },
+  {
+	  "id": "new-worktree",
+	  "name": "New worktree",
+	  "text": "Create a new worktree when working on this feature."
+  }
+]

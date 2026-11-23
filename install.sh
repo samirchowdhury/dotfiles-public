@@ -57,7 +57,7 @@ link tmux/tmux.conf .config/tmux/tmux.conf
 link vim/vimrc .vimrc
 link git/aliases.zsh .config/dotfiles/git-aliases.zsh
 link snippets.json .config/agent-snippets/snippets.json
-echo "Agent snippet picker setup specification: $DIR/SNIPPET-PICKER.md"
+echo "Agent integration setup specifications: $DIR/agent-integrations/README.md"
 
 if [ -e "$HOME/AGENTS.md" ] || [ -L "$HOME/AGENTS.md" ]; then
 	echo "warning: $HOME/AGENTS.md already exists; leaving it unchanged" >&2
