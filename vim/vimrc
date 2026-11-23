@@ -1,4 +1,5 @@
 runtime! defaults.vim
+filetype plugin indent on
 syntax enable
 
 set number
@@ -9,3 +10,10 @@ packadd! rose-pine
 colorscheme rosepine_moon
 
 nnoremap <silent> <C-f> :BLines<CR>
+
+augroup filetype_indentation
+  autocmd!
+  autocmd FileType markdown setlocal expandtab shiftwidth=2 softtabstop=2
+  autocmd FileType python setlocal expandtab shiftwidth=4 softtabstop=4
+  autocmd FileType cpp setlocal expandtab shiftwidth=4 softtabstop=4
+augroup END
