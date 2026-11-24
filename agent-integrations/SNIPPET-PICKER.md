@@ -27,6 +27,7 @@ Keep private prompts out of this public repo.
 | Escape | Close the picker without changing the draft |
 
 Insert at the cursor without discarding existing text or submitting the prompt.
+The inserted text must be visible immediately after Enter, without another keypress.
 If the harness cannot expose cursor insertion but supports reading and replacing a draft, explain the limitation and ask before implementing append-only insertion.
 Selecting a snippet never starts an agent turn or executes its contents.
 Show a clear empty state when no snippets match.
@@ -65,6 +66,8 @@ Verified against Pi 1.4.0 with a user extension at `~/.pi/agent/extensions/snipp
 Prefer `Ctrl+S` in the prompt editor after checking current bindings; Pi's picker-specific save bindings need to remain intact.
 Use the native `Input`, `SelectList`, and `fuzzyFilter` facilities, then `ctx.ui.pasteToEditor()` for cursor insertion.
 Open custom UI with `{ overlay: true }`: in this version, non-overlay custom UI restores the draft with `setText()`, moving the cursor to the end and losing the intended insertion position.
+Insert with `ctx.ui.pasteToEditor()` inside the confirmation handler before calling `done()` to close the overlay.
+Closing the overlay requests a redraw; inserting afterward can leave the new text invisible until the next keypress because `pasteToEditor()` does not itself request a redraw.
 Keep existing custom editors, including multi-skill expansion, intact.
 
 ## Acceptance checks
@@ -72,6 +75,7 @@ Keep existing custom editors, including multi-skill expansion, intact.
 - Edit the example snippet and verify its new text appears on the next picker opening.
 - Verify file ordering with no query, fuzzy matching, and keyboard selection.
 - Verify Enter inserts multiline text without submitting and preserves an existing draft.
+- Verify the inserted text renders before sending any subsequent key, including inspection or test-helper shortcuts that could trigger a redraw.
 - Verify Escape and no-match states leave the draft unchanged.
 - Verify malformed data produces a visible error without damaging the draft.
 - Verify the chosen hotkey works through the user's terminal and tmux where applicable.
