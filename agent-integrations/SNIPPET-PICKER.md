@@ -59,6 +59,14 @@ Other harnesses, including Claude Code, must be assessed against their installed
 This specification is not a promise of built-in snippet support in any harness.
 An MCP tool alone cannot supply the interactive hotkey and draft editor.
 
+## Pi setup notes
+
+Verified against Pi 1.4.0 with a user extension at `~/.pi/agent/extensions/snippet-picker.ts`.
+Prefer `Ctrl+S` in the prompt editor after checking current bindings; Pi's picker-specific save bindings need to remain intact.
+Use the native `Input`, `SelectList`, and `fuzzyFilter` facilities, then `ctx.ui.pasteToEditor()` for cursor insertion.
+Open custom UI with `{ overlay: true }`: in this version, non-overlay custom UI restores the draft with `setText()`, moving the cursor to the end and losing the intended insertion position.
+Keep existing custom editors, including multi-skill expansion, intact.
+
 ## Acceptance checks
 
 - Edit the example snippet and verify its new text appears on the next picker opening.

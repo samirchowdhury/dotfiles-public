@@ -16,7 +16,7 @@ Similarly use a number followed by `w`,`b` or `h`, `l` to jump by words or chara
 | Split pane side by side | `Cmd+E` | Left `Option+E` |
 | Split pane stacked | `Cmd+O` | Left `Option+O` |
 | Close active pane | `Cmd+Shift+W` | Left `Option+W` |
-| Navigate to adjacent pane | `Ctrl+Shift+Arrow` | Left `Option+Arrow` |
+| Navigate to adjacent pane | `Ctrl+Shift+Arrow` | Left `Option+Shift+Arrow` |
 | Cycle panes | No default binding | `Ctrl+B`, then `O` |
 | Switch to last active pane | — | `Ctrl+B`, then `;` |
 | Close WezTerm tab | `Cmd+W` | `Cmd+W` closes the enclosing WezTerm tab |
@@ -64,6 +64,9 @@ These are used in normal mode (press `Esc` first):
 | Scroll down/up half a screen | `Ctrl+D` / `Ctrl+U` |
 
 For fuzzy search, type to filter the lines, use the arrows to select one, and press `Enter` to jump to it. `Ctrl+F` replaces Vim's default full-page-forward shortcut.
+
+In Insert mode, left `Option+Left` / `Option+Right` moves backward/forward by one word without leaving Insert mode.
+The tmux pane shortcuts use `Option+Shift+Arrow` so they do not intercept these word motions.
 
 ### Indentation and bracket pairing
 
@@ -185,6 +188,11 @@ It does not install a picker or assume that your harness reads this file automat
 The [specification](agent-integrations/SNIPPET-PICKER.md) directs the agent to check your installed harness for native support or build a minimal external adapter.
 The intended workflow is a hotkey, fuzzy search, and Enter to insert without submitting.
 Snippets refresh on each picker opening, with no usage tracking.
+
+For Pi, use `Ctrl+S` to open the picker after setting up the integration.
+The user extension lives at `~/.pi/agent/extensions/snippet-picker.ts`; run `/reload` after installing or changing it.
+Use the arrows to select, `Enter` to insert at the cursor without submitting, and `Esc` to cancel.
+The implementation stays outside this repo, as required by the specification.
 
 ## Quiet tool traces
 
