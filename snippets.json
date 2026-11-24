@@ -8,5 +8,11 @@
     "id": "new-worktree",
     "name": "New worktree",
     "text": "Create a new worktree when working on this feature."
+  },
+  {
+    "id": "persist",
+    "name": "Persist improvements",
+    "text": "Persist the improvements we just talked about. Update docs and git commit as applicable."
   }
+
 ]
