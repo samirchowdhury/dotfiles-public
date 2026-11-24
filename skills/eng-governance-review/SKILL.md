@@ -1,6 +1,6 @@
 ---
 name: eng-governance-review
-description: Review a feature branch, PR/MR, compare URL, or diff using ENG-GOVERNANCE-ONTOLOGY.md as an internal lens, and write a readable, priority-ordered numbered review for Vim. Use for engineering governance review, ontology-based review, or finding consequential problems in a diff too large to read line by line. Explain concrete problems and effects in plain language; distinguish high-priority issues, should-fix findings, and optional nits without exposing an ontology checklist or rigid reporting schema.
+description: Review a feature branch, PR/MR, compare URL, or diff using ENG-GOVERNANCE-ONTOLOGY.md as an internal lens, write a decision-first, priority-ordered numbered review, and open it in ginmi, a browser UI where the user asks anchored clarifying questions. Use for engineering governance review, ontology-based review, or finding consequential problems in a diff too large to read line by line. Explain concrete problems and effects in plain language; distinguish high-priority issues, should-fix findings, and optional nits without exposing an ontology checklist or rigid reporting schema.
 ---
 
 # Engineering governance review
@@ -50,9 +50,15 @@ Use a dedicated workspace created with `mktemp -d "/tmp/${SANITIZED_BRANCH_NAME}
 Derive `SANITIZED_BRANCH_NAME` from the complete source branch name by replacing runs of characters outside `[A-Za-z0-9._-]` with `-` and removing leading dots and hyphens; use `review` if the result is empty.
 If no source branch is available, sanitize a descriptive patch identifier instead.
 Create `eng-governance-review-<short-head-sha>.md` in that workspace (use a descriptive patch identifier if no head SHA is available), and keep supporting artifacts there throughout follow-up.
+Name the companion metadata file `review-metadata.md`.
 Honor an explicit output path only if it is under `/tmp`; if the user requests a destination elsewhere, ask for a path under `/tmp` before writing there.
 Do not overwrite an unrelated file; ask which file under `/tmp` to use if the destination conflicts.
 For a supplied patch without repository context, state which call sites, tests, or runtime assumptions cannot be verified.
+
+Find the user's local clone of the reviewed repository for ginmi.
+Check `~/<project-name>` first (for example `~/vpu-main` for `bfr/vpu-main`), and confirm its `origin` remote points at the same project.
+Record it in the manifest only; do not fetch into it, check out, or otherwise modify it.
+If there is no matching local clone, leave `repo` out of the manifest; ginmi then clones from `remote`.
 
 ## Inspect large changes systematically
 
@@ -108,58 +114,107 @@ Do not recommend fallback paths, extra services, or defensive complexity by refl
 Suggest a focused fix when the evidence supports one; otherwise describe the choice or check needed without pretending the design is settled.
 If no material problems were found, say so instead of filling the list.
 
-## Write the Vim-first artifact
+## Write the decision-first review
 
-Write ordinary Markdown that is understandable both raw in Vim and rendered, not HTML or a chat-only response.
-Use one sentence per line, explicit sequential item numbers (`1.`, `2.`, `3.`), and no tables or nested numbered lists.
-Keep numbering continuous across priority groups so "item 4" is unambiguous.
+The user reads the review in ginmi, a browser UI that renders the Markdown, collapses details, links source references to the pinned head, and lets the user select any sentence or diagram node to ask a clarifying question.
+The same file must stay readable raw in Vim.
+Write ordinary Markdown, one sentence per line, with no tables and no HTML.
 
-Start with a title and at most a few short lines identifying the source, pinned comparison, and any material coverage or execution limitation.
-Then get straight to the priority-ordered findings.
-Keep detailed provenance, full SHAs, ontology identity, inventories, and retrieval/CI audit trails in a separate metadata file beside the review, with a single pointer if useful.
-Do not make the reader scroll through bookkeeping before reaching the problems.
+Use this structure, because ginmi relies on it:
 
-Give each item a short, concrete title naming the affected function/component and what goes wrong.
-Explain the problem and its effect in a short paragraph or a few bullets, with a small example when it clarifies the behavior.
-Include a focused source reference and, when useful, the relevant test gap or suggested fix.
-These are useful ingredients, not mandatory fields: use only what helps explain that finding.
-Aim for one screenful or less per item, and avoid repeating the same point under different labels.
-Do not print ontology symbols, a category legend, or boilerplate fields such as `Kind`, `Governance stake`, `Status`, `Study`, `Question`, `Next check`, or blank `Notes`.
-Optional labels such as "Test gap" or "Suggested fix" are fine when they make a specific item easier to scan; do not turn them into another fixed schema.
+1. A `#` title, then at most three short lines identifying the source, the pinned comparison, and any material coverage or execution limitation.
+2. `## Summary`: a numbered list with exactly one short line per item, in item order, stating what goes wrong.
+   If one decision governs several items, add a line after the list that names that decision and its effect on those items.
+3. Priority groups as `##` headings (`## High priority`, `## Should fix`, `## Nits (optional)`), omitting empty groups.
+4. Each finding as a `### N. Title` heading, numbered continuously across groups with plain integers (no `1a`).
+   The title names the affected component and what goes wrong.
+5. Under each heading, an opener bulleted list with three bullets:
+   - `- **Decide:**` the yes/no question about intended behavior that settles the finding, phrased so the user can answer it without reading the details.
+   - `- **Scenario:**` one concrete, realistic sequence of events and its consequence, with numbers when supported.
+   - `- **Fix:**` the focused fix if the answer is yes, and what to document instead if the answer is no.
+6. A line containing only `---`, then the details: how it happens, caveats, test gaps, validation steps, and source references.
+   ginmi collapses everything after `---`, so the opener must stand on its own.
 
-For example, a readable synthetic finding could look like this:
+Split compound findings: if a finding has two independent ways to fail or two independent fixes, make two items.
+The first time a technical term, configuration key, or abbreviation appears, explain it inline in plain language, e.g., "the memory limiter (a processor that rejects incoming data when collector memory is high)."
+Prefer a scenario over abstract mechanism; put the mechanism in the details.
+Aim for an opener the user can decide from in under a minute, and details of one screenful or less.
 
-```markdown
-## High priority
+When a finding involves a flow across several components, include a small Mermaid `flowchart` in a fenced `mermaid` block inside the details.
+Give nodes short, stable IDs and labels that match names in the code, e.g., `ML[memory_limiter]`, because the user can click a node to ask about it.
+Mark where the problem happens (a dropped edge, an error node) rather than drawing the whole system.
 
-1. **`submit_job`: reports success before the job is saved.**
-
-   The response is sent while the job exists only in memory.
-   If the process exits before the background write finishes, the caller has a job ID but the job is lost and cannot be retried through the status API.
-
-   Save the job before acknowledging it, or explicitly make the API best-effort.
-   See `src/jobs.cpp:42-58`.
-```
-
-This example illustrates the writing style, not a required layout or a real finding to reuse.
-
-Use actual line ranges from the pinned source, not invented positions or patch-offset numbers.
-For deletions, cite the base revision explicitly.
+Write source references as code spans of the form `path/from/repo/root:START-END` (or `:LINE`), one range per span, using actual line numbers at the pinned head.
+ginmi links each span to that file and range at the head SHA.
+For deletions, cite the base revision explicitly in prose.
 When only patch evidence is available, cite the patch path and hunk header, and disclose that source locations were not verified.
-Include only short excerpts that help explain the governance question; never reproduce credentials or sensitive values.
+Include only short excerpts that help explain the question; never reproduce credentials or sensitive values.
+
+Do not print ontology symbols, a category legend, or boilerplate fields such as `Kind`, `Governance stake`, `Status`, `Study`, `Question`, `Next check`, or blank `Notes`.
+Keep detailed provenance, full SHAs, ontology identity, inventories, and retrieval/CI audit trails in `review-metadata.md`, with a single pointer from the review's header lines.
 Do not put real private review outputs or fetched patches in this public skill repository as examples.
 
-Before delivering, reread the file as a human trying to understand the problems, not as someone checking schema compliance.
-Check that the most important findings come first, high-priority issues are distinguished from nits, each finding explains a concrete consequence with supporting evidence, and coverage claims match the inspected scope.
-Remove redundant labels, abstract governance language, and audit details that belong in metadata.
-Report the absolute output path and a shell-quoted `vim <path>` command.
-Summarize the number of items and any important coverage gaps without repeating the entire file in chat.
-Offer to start with a particular item, then let the user direct the walkthrough.
-Do not open an editor automatically or introduce a browser UI for this first iteration.
+For example, a synthetic finding could look like this:
+
+````markdown
+## High priority
+
+### 1. `submit_job` reports success before the job is saved
+
+- **Decide:** must an acknowledged job survive a process crash?
+- **Scenario:** the API returns job ID 42, the process is restarted during a deploy two seconds later, and job 42 is gone; the status API returns 404 and the caller has no way to retry.
+- **Fix:** save the job before acknowledging it; if best-effort is intended, document that acknowledged jobs can be lost.
+
+---
+
+The response is sent while the job exists only in memory, and the background writer (a goroutine that flushes jobs to the database every 5 seconds) persists it later.
+See `src/jobs.cpp:42-58`.
+````
+
+This illustrates the format, not a real finding to reuse.
+
+Before delivering, reread the file as a human trying to decide, not as someone checking schema compliance.
+Check that the most important findings come first, each opener supports a decision on its own, each finding explains a concrete consequence with supporting evidence, and coverage claims match the inspected scope.
+
+## Open the review in ginmi
+
+Write `review.json` in the workspace:
+
+```json
+{
+  "schema": 1,
+  "title": "<project> !<iid> — <short description>",
+  "url": "<MR or PR URL>",
+  "web_url": "<project web URL, e.g. https://gitlab.example.com/group/project>",
+  "repo": "<local clone path, e.g. ~/vpu-main; omit if none>",
+  "remote": "<git remote URL of the project>",
+  "fetch_refs": ["refs/merge-requests/<iid>/head", "<target branch>"],
+  "base_sha": "<full merge-base SHA>",
+  "head_sha": "<full head SHA>",
+  "review": "eng-governance-review-<short-head-sha>.md",
+  "metadata": "review-metadata.md",
+  "reading_map": "reading-map.json",
+  "producer": { "skill": "eng-governance-review", "version": "<skill git revision>" }
+}
+```
+
+Use `refs/pull/<number>/head` instead for a GitHub pull request.
+Get the skill version with `git -C <real skill directory> rev-parse --short HEAD`, appending `-dirty` if `git status --porcelain` reports changes there.
+`reading-map.json` is optional: a JSON list of `{"path": "...", "lines": "START-END", "why": "..."}` entries for the code you read to substantiate findings, so ginmi's question-answering agent knows where to look first.
+Omit `reading_map` from the manifest if you did not write it.
+
+Then run `ginmi open <workspace>`.
+It clones the repository at the head SHA into the workspace (sharing objects with the local clone without modifying it), builds the context pack, starts the local server if needed, and prints the review's URL.
+If `ginmi` is not on `PATH`, tell the user to install it (`cd ~/ginmi && npm link`) rather than skipping this step.
+If it fails, report the error; do not hand-edit ginmi's state under `<workspace>/ginmi/`.
+
+Report the URL, the absolute review path with a shell-quoted `vim <path>` command, the number of items, and any important coverage gaps, without repeating the review in chat.
 
 ## Continue the numbered conversation
 
 Treat the file as the shared review agenda throughout the session.
+The user's ginmi decisions, ratings, and notes per item are in `<workspace>/ginmi/decisions.json`, and their questions and answers are in `<workspace>/ginmi/summaries.jsonl`; read both before discussing items, and treat them as the user's input.
+ginmi's question-answering agent keeps the review as it was when the workspace was first opened, so later edits to the review file appear on page reload but not in that agent's context.
 When the user says "item 4", read the current file and discuss that item using the pinned evidence, narrowing source reading to the decision at hand.
 After discussion, record the user's conclusion and any remaining action briefly in ordinary prose under that item.
 Do not add status forms or empty bookkeeping fields.
