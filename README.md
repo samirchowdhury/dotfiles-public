@@ -112,6 +112,12 @@ source "$HOME/.config/dotfiles/git-aliases.zsh"
 
 The other Git shortcuts provided by the Oh My Zsh Git plugin require that plugin separately.
 
+On macOS, the installer installs Git with Homebrew.
+The default `/usr/bin/git` is an `xcrun` shim that took about 26 ms per call versus about 9 ms for the underlying binary.
+zsh's `git add` completion runs about nine Git commands per Tab, so `ga E<Tab>` took 0.35–0.55 s with the shim and about 0.2 s with Homebrew Git.
+Make sure `/opt/homebrew/bin` comes before `/usr/bin` in `PATH`; check with `which git`.
+Homebrew Git also installs its own `_git` zsh completion, which takes precedence over zsh's built-in one.
+
 ## Global agent instructions
 
 The installer copies the minimal `AGENTS.md` template to `~/AGENTS.md` and symlinks `~/.claude/CLAUDE.md` to that file, Claude Code's global user-instruction location. Existing files or conflicting symlinks at either destination trigger a warning and are left unchanged.

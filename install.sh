@@ -78,6 +78,11 @@ if ! command -v rg >/dev/null 2>&1; then
 	brew install ripgrep
 fi
 
+# macOS's /usr/bin/git is an xcrun shim that roughly triples the cost of each git call, slowing zsh git completion.
+if [ "$(uname)" = Darwin ] && ! brew list git >/dev/null 2>&1; then
+	brew install git
+fi
+
 if ! command -v markdownlint-cli2 >/dev/null 2>&1; then
 	if ! command -v npm >/dev/null 2>&1; then
 		echo "Markdown linting requires Node.js 22 or newer and npm; install them and rerun ./install.sh" >&2
