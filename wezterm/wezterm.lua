@@ -15,6 +15,18 @@ config.keys = {
 	{ key = "e", mods = "CMD", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) }, -- side by side
 	{ key = "o", mods = "CMD", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) }, -- stacked
 	{ key = "w", mods = "CMD|SHIFT", action = act.CloseCurrentPane({ confirm = false }) }, -- close pane
+	{
+		key = "r",
+		mods = "CMD|SHIFT",
+		action = act.PromptInputLine({
+			description = "Rename tab (leave empty for automatic title)",
+			action = wezterm.action_callback(function(window, _, title)
+				if title ~= nil then
+					window:active_tab():set_title(title)
+				end
+			end),
+		}),
+	},
 }
 
 return config

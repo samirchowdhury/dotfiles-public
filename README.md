@@ -20,6 +20,7 @@ Similarly use a number followed by `w`,`b` or `h`, `l` to jump by words or chara
 | Cycle panes | No default binding | `Ctrl+B`, then `O` |
 | Switch to last active pane | — | `Ctrl+B`, then `;` |
 | Close WezTerm tab | `Cmd+W` | `Cmd+W` closes the enclosing WezTerm tab |
+| Rename WezTerm tab (empty name restores automatic title) | `Cmd+Shift+R` | `Cmd+Shift+R` renames the enclosing WezTerm tab |
 | Search command history with fzf | `Ctrl+R` | `Ctrl+R` |
 | Insert a file path with fzf | `Ctrl+T` | `Ctrl+T` |
 | Change directory with fzf | Left `Option+C` | Left `Option+C` |
@@ -146,7 +147,7 @@ The Copilot link continues to point to the shared installation path.
 
 ## Engineering governance review
 
-The repo's [`eng-governance-review` skill](skills/eng-governance-review/SKILL.md) uses [`ENG-GOVERNANCE-ONTOLOGY.md`](ENG-GOVERNANCE-ONTOLOGY.md) as an internal lens for reviewing a feature branch, PR/MR, compare URL, or patch.
+The repo's [`eng-governance-review` skill](skills/eng-governance-review/SKILL.md) uses its bundled [`ENG-GOVERNANCE-ONTOLOGY.md`](skills/eng-governance-review/references/ENG-GOVERNANCE-ONTOLOGY.md) as an internal lens for reviewing a feature branch, PR/MR, compare URL, or patch.
 The output is a readable, numbered Markdown review ordered by priority: high-priority problems first, then should-fix findings, with optional nits clearly separated.
 Each finding explains the concrete problem and effect, with focused source references and examples or suggested fixes where useful, rather than ontology tags or a rigid reporting schema.
 Detailed provenance and inspection records stay in separate metadata so the review gets straight to the problems.
@@ -154,7 +155,7 @@ Open the file in Vim and discuss it with the agent by item number.
 Numbers remain stable during the walkthrough.
 
 The installer symlinks the skill into `~/.agents/skills/eng-governance-review` for pi and `~/.copilot/skills/eng-governance-review` for Copilot CLI and VS Code Copilot.
-The skill's ontology reference is a relative symlink to the root document, so edits to the ontology apply to future reviews without copying it.
+The canonical ontology lives in the skill's `references/` directory, keeping the skill self-contained.
 Keep this checkout in place while using the installed links.
 Existing regular destination files or directories are backed up using the installer's normal `.bak` policy.
 
