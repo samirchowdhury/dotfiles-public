@@ -13,6 +13,10 @@
     "id": "persist",
     "name": "Persist improvements",
     "text": "Persist the improvements we just talked about. Update docs and git commit as applicable."
+  },
+  {
+    "id": "trade",
+    "name": "Tradeoffs",
+    "text": "Walk me through the tradeoffs but don't make any changes."
   }
-
 ]
