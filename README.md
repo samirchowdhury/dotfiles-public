@@ -20,7 +20,7 @@ Similarly use a number followed by `w`,`b` or `h`, `l` to jump by words or chara
 | Cycle panes | No default binding | `Ctrl+B`, then `O` |
 | Switch to last active pane | — | `Ctrl+B`, then `;` |
 | Close WezTerm tab | `Cmd+W` | `Cmd+W` closes the enclosing WezTerm tab |
-| Rename WezTerm tab (empty name restores automatic title) | `Cmd+Shift+R` | `Cmd+Shift+R` renames the enclosing WezTerm tab |
+| Rename WezTerm tab and active window header (empty name restores automatic title) | `Cmd+Shift+R` | `Cmd+Shift+R` renames the enclosing WezTerm tab and active window header |
 | Search command history with fzf | `Ctrl+R` | `Ctrl+R` |
 | Insert a file path with fzf | `Ctrl+T` | `Ctrl+T` |
 | Change directory with fzf | Left `Option+C` | Left `Option+C` |

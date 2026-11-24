@@ -3,6 +3,18 @@ local act = wezterm.action
 
 local config = wezterm.config_builder()
 
+-- Show the active tab's custom name in the wider window title bar too.
+wezterm.on("format-window-title", function(tab, pane, tabs)
+	local title = tab.tab_title
+	if title == "" then
+		title = pane.title
+	end
+	if #tabs > 1 then
+		return string.format("[%d/%d] %s", tab.tab_index + 1, #tabs, title)
+	end
+	return title
+end)
+
 config.color_scheme = "rose-pine-moon"
 config.window_background_opacity = 0.8
 config.macos_window_background_blur = 50
