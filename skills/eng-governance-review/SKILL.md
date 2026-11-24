@@ -122,8 +122,10 @@ Write ordinary Markdown, one sentence per line, with no tables and no HTML.
 
 Use this structure, because ginmi relies on it:
 
-1. A `#` title, then at most three short lines identifying the source, the pinned comparison, and any material coverage or execution limitation.
-2. `## Summary`: a numbered list with exactly one short line per item, in item order, stating what goes wrong.
+1. A `#` title, then a short plain-language description of what the change does and why, starting with "This MR" or "This PR" (for example, "This MR replaces grafana-agent with the OpenTelemetry Collector for shipping VPU metrics and logs."), in one to three sentences.
+   Describe the change itself, not the review: put branches, pinned SHAs, coverage, execution limits, and provenance in `review-metadata.md` only.
+   If the review is partial, add one sentence saying which part was not reviewed.
+2. `## Summary of findings`: a numbered list with exactly one short line per item, in item order, stating what goes wrong.
    If one decision governs several items, add a line after the list that names that decision and its effect on those items.
 3. Priority groups as `##` headings (`## High priority`, `## Should fix`, `## Nits (optional)`), omitting empty groups.
 4. Each finding as a `### N. Title` heading, numbered continuously across groups with plain integers (no `1a`).
@@ -151,7 +153,7 @@ When only patch evidence is available, cite the patch path and hunk header, and 
 Include only short excerpts that help explain the question; never reproduce credentials or sensitive values.
 
 Do not print ontology symbols, a category legend, or boilerplate fields such as `Kind`, `Governance stake`, `Status`, `Study`, `Question`, `Next check`, or blank `Notes`.
-Keep detailed provenance, full SHAs, ontology identity, inventories, and retrieval/CI audit trails in `review-metadata.md`, with a single pointer from the review's header lines.
+Keep detailed provenance, full SHAs, ontology identity, inventories, and retrieval/CI audit trails in `review-metadata.md`; ginmi gives the question-answering agent that file, so the review itself need not point to it.
 Do not put real private review outputs or fetched patches in this public skill repository as examples.
 
 For example, a synthetic finding could look like this:
