@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Expand several explicitly selected skills into one user message before the agent sees it.
+Autocomplete several skill names in the prompt editor, then expand the selected skills into one user message before the agent sees it.
+Both editor completion and submission-time expansion are required; an input hook alone does not provide completion while typing.
 Do not rely on the model to notice skill names and read the files itself.
 This repo owns the specification, not a harness extension implementation.
 
@@ -33,11 +34,23 @@ If a name is unknown or a file cannot be read, visibly identify the problem and 
 Do not silently drop a skill or send a partially expanded request to the model.
 Errors should not start an agent turn.
 
+## Editor completion
+
+Open skill-name suggestions immediately when `/` is typed for the second or later command in the leading sequence, without requiring Tab or `/skill:`.
+Allow bare-name fuzzy queries such as `/bfr`, `/gitlab`, or `/bgl` to find `bfr-gitlab-cli`, while continuing to support `/skill:bfr`.
+Treat an additional slash within the token as a file-path query rather than a skill-name query.
+Use the harness's normal completion menu, descriptions, filtering, and selection controls.
+Selecting a skill must insert the complete `/skill:<name>` token followed by a space without submitting the request or changing earlier commands or later task text.
+Keep ordinary slash commands and file completion working outside the leading skill sequence.
+Prefer a supported autocomplete-provider wrapper for suggestions and completion insertion.
+If immediate slash triggering also requires an editor adapter, use a minimal supported subclass and delegate all other input to the native editor.
+Do not patch private editor methods or intercept raw terminal input.
+
 ## Agent-assisted setup
 
 1. Identify the target harness and installed version, then inspect current documentation and supported APIs.
 2. Prefer native multi-skill expansion if it meets this specification.
-   Otherwise, use a small input-transform extension outside this repo.
+   Otherwise, use a small extension outside this repo with both editor completion and input transformation.
 3. Preserve unrelated extensions and configuration.
    Do not patch harness internals, install dependencies, add services, or make extra model calls for expansion.
 4. Verify the acceptance checks below and report any checks that require an interactive session.
@@ -70,11 +83,24 @@ The hook must not submit another message itself, which could duplicate a turn or
 
 After installation or edits, run `/reload` in Pi.
 To remove it, delete `~/.pi/agent/extensions/multi-skill.ts` and run `/reload`.
-The existing native completion for `/skill:name` remains unchanged; completion of a second skill token is not added by this integration.
+In `session_start`, when `ctx.mode === "tui"`, register a wrapper through `ctx.ui.addAutocompleteProvider()`.
+Recognize a partial slash token only after one or more leading `/skill:<name>` commands.
+For that token, ask the current provider for suggestions as if the token were the first command, with `force: false` even when Tab requested completion, and keep only `skill:` results.
+Handle applying these completions explicitly so the inserted token retains its leading slash and trailing space; delegate other suggestions, completions, trigger characters, and file-completion decisions to the current provider.
+Pi 1.4.0's provider hook does not itself auto-trigger a menu on a bare second slash.
+Install a minimal `CustomEditor` subclass through `ctx.ui.setEditorComponent()` to supply that trigger.
+In `handleInput`, first call `super.handleInput(data)`; when `data === "/"` and the resulting cursor is at a bare continuation token, call `super.handleInput("\t")` to request the normal completion action.
+This supports both the first line and a continuation on a later line, without changing input elsewhere.
+It uses Pi's native Tab completion binding; verify this binding if the user has customized it.
+Do not change keybindings, and ask before replacing an unrelated custom editor if one is already installed.
 Pi may render only the first wrapper as a skill card; verify that the complete combined text reaches model context rather than treating card appearance as proof of expansion.
 
 ## Acceptance checks
 
+- Type `/skill:eng-governance-review /` in the real editor and verify the skill menu appears immediately without Tab or submission.
+- Continue with bare-name queries such as `/bfr`, `/gitlab`, and `/bgl`, then select a result and verify both full `/skill:<name>` tokens remain intact with a trailing space and no agent turn.
+- Verify explicit `/skill:` filtering, immediate third-skill and newline slash triggering, and completion with task text after the cursor.
+- Verify ordinary slash-command and file completion still work outside the leading skill sequence.
 - Submit two and then three leading skill commands and verify every body appears in order with the correct location and reference directory.
 - Separate commands with a newline and verify expansion still works.
 - Repeat a skill name and verify its body appears only once.

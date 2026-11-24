@@ -12,7 +12,7 @@ Do not assume that a harness automatically reads this folder.
 
 - [Quiet tool traces](QUIET-TOOL-TRACES.md): hide routine tool calls and output, keep errors visible, and reveal traces on demand without changing execution or history.
 - [Snippet picker](SNIPPET-PICKER.md): fuzzy-search reusable prompts and insert a selection into the draft without submitting it.
-- [Multi-skill expansion](MULTI-SKILL.md): expand consecutive leading skill commands into one request, preserving each skill's instructions and relative references.
+- [Multi-skill expansion](MULTI-SKILL.md): autocomplete consecutive leading skill commands and expand them into one request, preserving each skill's instructions and relative references.
 
 Snippet data lives in [`../snippets.json`](../snippets.json), separate from these specifications.
 The repo installer links it to `~/.config/agent-snippets/snippets.json` but does not install harness integrations.
