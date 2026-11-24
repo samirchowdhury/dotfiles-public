@@ -64,6 +64,14 @@ These are used in normal mode (press `Esc` first):
 
 For fuzzy search, type to filter the lines, use the arrows to select one, and press `Enter` to jump to it. `Ctrl+F` replaces Vim's default full-page-forward shortcut.
 
+### Indentation and bracket pairing
+
+The installer adds [vim-sleuth](https://github.com/tpope/vim-sleuth) to detect indentation from the current file or nearby files, rather than enforce per-language widths.
+Use `:Sleuth` to rerun detection and `:setlocal expandtab? shiftwidth? softtabstop?` to inspect the current settings.
+[Auto-pairs](https://github.com/jiangmiao/auto-pairs) inserts matching brackets, braces, and quotes in Insert mode.
+Type the closing character to move past an automatically inserted match.
+Neither plugin reformats whole files; Markdown keeps the formatter described below.
+
 ### Markdown linting
 
 The installer adds [ALE](https://github.com/dense-analysis/ale) and installs `markdownlint-cli2` globally with npm if it is missing.
@@ -109,6 +117,50 @@ The other Git shortcuts provided by the Oh My Zsh Git plugin require that plugin
 The installer copies the minimal `AGENTS.md` template to `~/AGENTS.md` and symlinks `~/.claude/CLAUDE.md` to that file, Claude Code's global user-instruction location. Existing files or conflicting symlinks at either destination trigger a warning and are left unchanged.
 
 Edit `~/AGENTS.md` for your local instructions, or populate the repo template for future machines. This is a copy, not a symlink to the repo: later template edits do not update installed files. Do not put private instructions or secrets in this public repo.
+
+## Skill creator
+
+The installer adds Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/skill-creator) globally for Pi and Copilot.
+It fetches commit `e4bb5d960d87126ff3b3a8af1a104b7db67560ba` with Git and installs only the skill directory at `~/.agents/skills/skill-creator`.
+First installation requires Git and internet access, but not the `skills` CLI.
+The installer also links `~/.copilot/skills/skill-creator` to the shared installation.
+Existing installations and conflicting Copilot paths are left unchanged, including local edits.
+Rerunning the installer does not upgrade the skill or enforce the pin on an existing installation.
+
+In Pi, run `/reload`, then invoke `/skill:skill-creator` followed by your request.
+In a new Copilot session, ask it to use `skill-creator` to create or improve a named skill.
+Some bundled evaluation tools require Python or the Claude CLI, including `claude -p` for description optimization.
+The installer does not install those dependencies or add Pi-specific evaluation adapters.
+
+To update, review the upstream changes and change `revision` in `install_skill_creator` in `install.sh` to the chosen commit.
+Update the commit and source link in this section too.
+Before rerunning `./install.sh`, move the existing `~/.agents/skills/skill-creator` installation to an unused backup path.
+Keep that backup until you have checked the new version and recovered any local edits.
+The Copilot link continues to point to the shared installation path.
+
+## Engineering governance review
+
+The repo's [`eng-governance-review` skill](skills/eng-governance-review/SKILL.md) uses [`ENG-GOVERNANCE-ONTOLOGY.md`](ENG-GOVERNANCE-ONTOLOGY.md) as an internal lens for reviewing a feature branch, PR/MR, compare URL, or patch.
+The output is a readable, numbered Markdown review ordered by priority: high-priority problems first, then should-fix findings, with optional nits clearly separated.
+Each finding explains the concrete problem and effect, with focused source references and examples or suggested fixes where useful, rather than ontology tags or a rigid reporting schema.
+Detailed provenance and inspection records stay in separate metadata so the review gets straight to the problems.
+Open the file in Vim and discuss it with the agent by item number.
+Numbers remain stable during the walkthrough.
+
+The installer symlinks the skill into `~/.agents/skills/eng-governance-review` for pi and `~/.copilot/skills/eng-governance-review` for Copilot CLI and VS Code Copilot.
+The skill's ontology reference is a relative symlink to the root document, so edits to the ontology apply to future reviews without copying it.
+Keep this checkout in place while using the installed links.
+Existing regular destination files or directories are backed up using the installer's normal `.bak` policy.
+
+In pi, run `/reload`, then `/skill:eng-governance-review <branch-or-diff-URL>`.
+In a new Copilot CLI or VS Code Copilot agent session, ask: "Use eng-governance-review on BRANCH_OR_DIFF_URL and write the agenda to /tmp/governance-review.md."
+The agent uses available read-only repository access and asks for a base branch if it cannot resolve the intended comparison.
+It reports the file path when ready; open it with `vim /tmp/governance-review.md`, then ask the agent to walk through an item.
+Save Vim edits before asking the agent to update the file, and use `:checktime` afterward to reload changes from disk.
+
+To remove the skill from the harnesses, remove those two user-level symlinks.
+No harness extensions, additional skill dependencies, or settings changes are required.
+Repository access may require an authenticated host CLI or a local checkout.
 
 ## Agent integrations
 

@@ -39,10 +39,3 @@ augroup markdown_formatting
   autocmd!
   autocmd BufWritePre * if &l:filetype ==# 'markdown' | call s:FormatMarkdown() | endif
 augroup END
-
-augroup filetype_indentation
-  autocmd!
-  autocmd FileType markdown setlocal expandtab shiftwidth=2 softtabstop=2
-  autocmd FileType python setlocal expandtab shiftwidth=4 softtabstop=4
-  autocmd FileType cpp setlocal expandtab shiftwidth=4 softtabstop=4
-augroup END

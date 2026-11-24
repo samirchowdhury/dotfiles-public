@@ -31,10 +31,44 @@ install_vim_package() {
 	git clone --depth=1 "$url" "$path"
 }
 
+install_skill_creator() {
+	local revision="e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
+	local dst="$HOME/.agents/skills/skill-creator" copilot="$HOME/.copilot/skills/skill-creator" tmp
+	if [ -e "$dst" ] || [ -L "$dst" ]; then
+		echo "skill-creator already exists at $dst; leaving it unchanged"
+	else
+		tmp="$(mktemp -d)"
+		git -C "$tmp" init --quiet
+		git -C "$tmp" fetch --depth=1 https://github.com/anthropics/skills.git "$revision"
+		git -C "$tmp" checkout FETCH_HEAD -- skills/skill-creator
+		mkdir -p "$(dirname "$dst")"
+		mv "$tmp/skills/skill-creator" "$dst"
+		rm -rf "$tmp"
+		echo "installed skill-creator at $dst from $revision"
+	fi
+
+	if [ -L "$copilot" ] && [ "$(readlink "$copilot")" = "$dst" ]; then
+		echo "Copilot skill-creator already linked to $dst"
+	elif [ -e "$copilot" ] || [ -L "$copilot" ]; then
+		echo "warning: $copilot already exists; leaving it unchanged" >&2
+	else
+		mkdir -p "$(dirname "$copilot")"
+		ln -s "$dst" "$copilot"
+		echo "linked $copilot -> $dst"
+	fi
+}
+
+install_skill_creator
+
+link skills/eng-governance-review .agents/skills/eng-governance-review
+link skills/eng-governance-review .copilot/skills/eng-governance-review
+
 install_vim_package "$HOME/.vim/pack/themes/start/rose-pine" colors/rosepine_moon.vim https://github.com/rose-pine/vim.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/fzf" plugin/fzf.vim https://github.com/junegunn/fzf.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/fzf-vim" plugin/fzf.vim https://github.com/junegunn/fzf.vim.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/ale" plugin/ale.vim https://github.com/dense-analysis/ale.git
+install_vim_package "$HOME/.vim/pack/dotfiles/start/vim-sleuth" plugin/sleuth.vim https://github.com/tpope/vim-sleuth.git
+install_vim_package "$HOME/.vim/pack/dotfiles/start/auto-pairs" plugin/auto-pairs.vim https://github.com/jiangmiao/auto-pairs.git
 
 if ! command -v rg >/dev/null 2>&1; then
 	if ! command -v brew >/dev/null 2>&1; then
