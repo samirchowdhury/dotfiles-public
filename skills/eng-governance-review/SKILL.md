@@ -215,7 +215,7 @@ Report the URL, the absolute review path with a shell-quoted `vim <path>` comman
 ## Continue the numbered conversation
 
 Treat the file as the shared review agenda throughout the session.
-The user's ginmi decisions, ratings, and notes per item are in `<workspace>/ginmi/decisions.json`, and their questions and answers are in `<workspace>/ginmi/summaries.jsonl`; read both before discussing items, and treat them as the user's input.
+The user's ginmi decisions per item (accept, dismiss, or defer) are in `<workspace>/ginmi/decisions.json`, and their questions and answers are in `<workspace>/ginmi/summaries.jsonl`; read both before discussing items, and treat them as the user's input.
 ginmi's question-answering agent keeps the review as it was when the workspace was first opened, so later edits to the review file appear on page reload but not in that agent's context.
 When the user says "item 4", read the current file and discuss that item using the pinned evidence, narrowing source reading to the decision at hand.
 After discussion, record the user's conclusion and any remaining action briefly in ordinary prose under that item.
