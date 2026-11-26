@@ -23,6 +23,7 @@ Similarly use a number followed by `w`,`b` or `h`, `l` to jump by words or chara
 | Rename WezTerm tab and active window header (empty name restores automatic title) | `Cmd+Shift+R` | `Cmd+Shift+R` renames the enclosing WezTerm tab and active window header |
 | Search command history with fzf | `Ctrl+R` | `Ctrl+R` |
 | Insert a file path with fzf | `Ctrl+T` | `Ctrl+T` |
+| Search file contents and open a match in Vim | `Ctrl+G` | `Ctrl+G` |
 | Change directory with fzf | Left `Option+C` | Left `Option+C` |
 | Accept zsh autosuggestion | `Right Arrow` | `Right Arrow` |
 | Accept next suggested word / move forward a word | `Ctrl+F` | `Ctrl+F` |
@@ -124,6 +125,7 @@ These shell tools are configured separately in `~/.zshrc`, not by `install.sh`. 
 
 ```zsh
 source <(fzf --zsh)
+source "$HOME/.config/dotfiles/content-search.zsh"
 source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 bindkey '^F' forward-word
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

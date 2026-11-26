@@ -96,6 +96,7 @@ link wezterm/wezterm.lua .config/wezterm/wezterm.lua
 link tmux/tmux.conf .config/tmux/tmux.conf
 link vim/vimrc .vimrc
 link git/aliases.zsh .config/dotfiles/git-aliases.zsh
+link shell/content-search.zsh .config/dotfiles/content-search.zsh
 link snippets.json .config/agent-snippets/snippets.json
 echo "Agent integration setup specifications: $DIR/agent-integrations/README.md"
 
