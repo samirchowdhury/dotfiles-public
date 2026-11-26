@@ -54,6 +54,9 @@ These are used in normal mode (press `Esc` first):
 | Action | Keys |
 | --- | --- |
 | Fuzzy-search lines in the current buffer | `Ctrl+F` |
+| Hide/show Git diff highlights in the current buffer | `\gd` |
+| Preview the changed hunk under the cursor | `\gp` |
+| Next/previous changed hunk | `]c` / `[c` |
 | Move down/up by lines | `j` / `k` (e.g. `5j`) |
 | Move left/right by characters | `h` / `l` (e.g. `5h`) |
 | Move forward/backward by words | `w` / `b` (e.g. `3w`) |
@@ -67,6 +70,28 @@ For fuzzy search, type to filter the lines, use the arrows to select one, and pr
 
 In Insert mode, left `Option+Left` / `Option+Right` moves backward/forward by one word without leaving Insert mode.
 The tmux pane shortcuts use `Option+Shift+Arrow` so they do not intercept these word motions.
+
+### Feature-branch diff highlighting
+
+The installer adds [Vim GitGutter](https://github.com/airblade/vim-gitgutter).
+When opening a tracked file, Vim automatically compares it against `git merge-base main HEAD`, showing gutter signs and whole-line highlights for added, modified, and removed lines.
+No keybinding is needed to turn this on; the diff includes committed feature-branch changes and unsaved buffer edits.
+Changes update after about 250 ms of idle time.
+Deleted lines are marked beside surviving lines rather than displayed as text.
+Files absent from the base commit, including entirely new files, may not receive markers from GitGutter.
+
+In normal mode, press `\gd` to hide/show both signs and highlights for the current buffer.
+Here `\` is Vim's default leader key; press it and then `g`, `d` in sequence.
+Use `]c` / `[c` to move between hunks and `\gp` to preview the original and changed text.
+Stage/undo mappings are deliberately not installed; these review shortcuts do not change files or the Git index.
+
+The comparison SHA is pinned when the first Git file is opened and stays fixed for the Vim session, even if `main` or `HEAD` later advances.
+Run `:GitDiffBase` to recalculate the merge-base with `main`, or `:GitDiffBase origin/main` to select another base ref.
+To reuse a known original branch-point SHA after merging or rebasing, run `:GitDiffBase <sha>` with that ancestor commit.
+A new Vim session calculates a new merge-base; it cannot infer an older branch point lost through a rebase.
+GitGutter's comparison base is global, so use separate Vim sessions for different repositories; files from another repository in the same session have GitGutter disabled to avoid applying the wrong SHA.
+If `main` is unavailable or has no common ancestor, highlights stay disabled and Vim asks you to choose a ref with `:GitDiffBase <base-ref>` rather than silently compare against the index.
+Restart Vim after first installation to load the plugin and configuration.
 
 ### Indentation and bracket pairing
 

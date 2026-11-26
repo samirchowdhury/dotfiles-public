@@ -69,6 +69,7 @@ install_vim_package "$HOME/.vim/pack/dotfiles/start/fzf-vim" plugin/fzf.vim http
 install_vim_package "$HOME/.vim/pack/dotfiles/start/ale" plugin/ale.vim https://github.com/dense-analysis/ale.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/vim-sleuth" plugin/sleuth.vim https://github.com/tpope/vim-sleuth.git
 install_vim_package "$HOME/.vim/pack/dotfiles/start/auto-pairs" plugin/auto-pairs.vim https://github.com/jiangmiao/auto-pairs.git
+install_vim_package "$HOME/.vim/pack/dotfiles/start/vim-gitgutter" plugin/gitgutter.vim https://github.com/airblade/vim-gitgutter.git
 
 if ! command -v rg >/dev/null 2>&1; then
 	if ! command -v brew >/dev/null 2>&1; then

@@ -9,6 +9,59 @@ set background=dark
 packadd! rose-pine
 colorscheme rosepine_moon
 
+set signcolumn=yes
+set updatetime=250
+let g:gitgutter_highlight_lines = 1
+" Keep this review UI read-only: don't add the plugin's stage/undo mappings.
+let g:gitgutter_map_keys = 0
+let s:git_diff_repo = ''
+
+function! s:SetGitDiffBase(ref, automatic) abort
+  if &buftype !=# '' || empty(expand('%:p'))
+    return
+  endif
+  let l:git = 'git -C ' . shellescape(expand('%:p:h'))
+  let l:root = systemlist(l:git . ' rev-parse --show-toplevel 2>/dev/null')
+  if v:shell_error
+    return
+  endif
+  " GitGutter's base is global, so don't apply one repo's SHA to another repo.
+  if !empty(s:git_diff_repo) && s:git_diff_repo !=# l:root[0]
+    call gitgutter#buffer_disable()
+    echom 'Git diff: use a separate Vim session for a different repository.'
+    return
+  endif
+  if a:automatic && s:git_diff_repo ==# l:root[0]
+    return
+  endif
+  let l:base = systemlist(l:git . ' merge-base ' . shellescape(a:ref) . ' HEAD 2>&1')
+  if v:shell_error
+    call gitgutter#buffer_disable()
+    if !get(b:, 'git_diff_base_warning', 0)
+      echom 'Git diff: no merge-base with ' . a:ref . '; use :GitDiffBase <base-ref>.'
+      let b:git_diff_base_warning = 1
+    endif
+    return
+  endif
+  let s:git_diff_repo = l:root[0]
+  let g:gitgutter_diff_base = l:base[0]
+  call gitgutter#buffer_enable()
+  if !a:automatic
+    echom 'Git diff base: ' . a:ref . ' merge-base ' . strpart(l:base[0], 0, 12)
+  endif
+endfunction
+
+command! -nargs=? GitDiffBase call <SID>SetGitDiffBase(empty(<q-args>) ? 'main' : <q-args>, 0)
+augroup branch_diff
+  autocmd!
+  autocmd BufEnter * call s:SetGitDiffBase('main', 1)
+augroup END
+
+nnoremap <silent> <Leader>gd :GitGutterBufferToggle<CR>
+nnoremap <silent> <Leader>gp :GitGutterPreviewHunk<CR>
+nnoremap <silent> ]c :GitGutterNextHunk<CR>
+nnoremap <silent> [c :GitGutterPrevHunk<CR>
+
 nnoremap <silent> <C-f> :BLines<CR>
 inoremap <M-Left> <C-o>b
 inoremap <M-Right> <C-o>w
