@@ -190,6 +190,8 @@ Write `review.json` in the workspace:
   "web_url": "<project web URL, e.g. https://gitlab.example.com/group/project>",
   "repo": "<local clone path, e.g. ~/vpu-main; omit if none>",
   "remote": "<git remote URL of the project>",
+  "source_branch": "<MR source branch>",
+  "target_branch": "<MR target branch>",
   "fetch_refs": ["refs/merge-requests/<iid>/head", "<target branch>"],
   "base_sha": "<full merge-base SHA>",
   "head_sha": "<full head SHA>",
